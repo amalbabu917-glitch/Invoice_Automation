@@ -30,10 +30,10 @@ Then open `http://localhost:3000/register`.
 src/
   app.js              Express app + session/middleware wiring
   db/
-    schema.sql        The entire database schema (Postgres) — source of truth
+    schema.sql        The entire database schema (Postgres) - source of truth
     migrate.js         Applies schema.sql to DATABASE_URL
     pool.js             pg connection pool
-  models/               Query functions (users, invoices) — no ORM
+  models/               Query functions (users, invoices) - no ORM
   routes/                auth, profile, invoices, dashboard, report
   utils/
     password.js         Password policy + hashing (bcrypt)
@@ -55,7 +55,7 @@ public/                  Static assets + uploaded signature images
 - **Single-page PDF**: invoices are capped at 15 line items
   (`MAX_ITEMS_PER_INVOICE` in `src/routes/invoices.js`) and rendered in a
   fixed 210mm×297mm container so they always print to one A4 page.
-- **Cancelled invoices** are never deleted — they stay in the dashboard count
+- **Cancelled invoices** are never deleted - they stay in the dashboard count
   and in reports, flagged with a `CANCELLED` status/remark.
 - **Forgot password** uses a 15-minute expiring token emailed as a reset
   link (not OTP), and never reveals whether an email exists on the system.

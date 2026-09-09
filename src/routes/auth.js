@@ -138,7 +138,7 @@ router.post('/forgot-password', redirectIfAuthed, async (req, res, next) => {
         html: `<p>Reset your password using the link below (valid for 15 minutes):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
       });
     }
-    // Same response whether or not the email was found — never reveal existence.
+    // Same response whether or not the email was found - never reveal existence.
     res.render('forgot-password', { message: genericMessage, error: null });
   } catch (err) {
     next(err);

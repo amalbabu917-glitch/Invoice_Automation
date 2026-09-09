@@ -1,4 +1,4 @@
--- Invoice App — Postgres schema (Supabase-compatible)
+-- Invoice App - Postgres schema (Supabase-compatible)
 --
 -- Run this once against your database:
 --   Supabase: Dashboard -> SQL Editor -> paste this file -> Run

@@ -58,7 +58,7 @@ router.post('/invoices', requireAuth, async (req, res, next) => {
     const taxableAmount = items.reduce((sum, it) => sum + it.amount, 0);
 
     // GST breakdown (IGST vs CGST/SGST) only applies once the business itself
-    // has a GSTIN on file — that's also what flips the heading to "TAX INVOICE".
+    // has a GSTIN on file - that's also what flips the heading to "TAX INVOICE".
     // Without one, the invoice is a plain "SERVICE BILL" with no tax lines.
     const businessUser = await userModel.findFullById(req.session.userId);
     const gst = businessUser.gstin

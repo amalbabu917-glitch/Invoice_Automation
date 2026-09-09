@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title><% if (!notFound) { %><%= invoice.invoice_number %> — <%= heading %><% } else { %>Invoice not found<% } %></title>
+<title><% if (!notFound) { %><%= invoice.invoice_number %> - <%= heading %><% } else { %>Invoice not found<% } %></title>
 <% if (!notFound) { %><base href="<%= appBaseUrl %>/"><% } %>
 <style>
   /* Self-contained styles: this template is also rendered headlessly by

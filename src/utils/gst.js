@@ -9,7 +9,7 @@
 // This is the literal client rule (spec section "CONFIGURATION TO BE DONE").
 // It differs from normal GST practice (a B2C sale with no GSTIN at all is
 // still normally intrastate CGST+SGST if buyer and seller are in the same
-// state) — implemented as written since it was explicit in the source doc.
+// state) - implemented as written since it was explicit in the source doc.
 const BUSINESS_STATE_CODE = process.env.BUSINESS_GST_STATE_CODE || '32';
 
 const IGST_RATE = 18;

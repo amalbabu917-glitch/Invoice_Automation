@@ -1,5 +1,5 @@
 # Puppeteer needs a handful of system shared libraries to run its bundled
-# Chromium that a bare node:slim image doesn't include — installed explicitly
+# Chromium that a bare node:slim image doesn't include - installed explicitly
 # below rather than relying on the host platform to provide them.
 FROM node:20-slim
 

@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 // 4-character-class requirement, which is unusually weak for a password
 // policy (little room left for actual entropy). It's implemented exactly
 // as specified because it was explicit in the client's document, not
-// because it's recommended — flagged here and in SETUP.md so whoever owns
+// because it's recommended - flagged here and in SETUP.md so whoever owns
 // this later can decide whether to relax it.
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{5,6}$/;
 

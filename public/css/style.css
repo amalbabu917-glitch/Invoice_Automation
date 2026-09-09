@@ -1,8 +1,8 @@
 /* ==========================================================================
-   Design system: "Minimalism & Swiss Style" — navy + emerald, Poppins/Open
+   Design system: "Minimalism & Swiss Style" - navy + emerald, Poppins/Open
    Sans. Chosen for this being an enterprise/dashboard business tool, not a
    marketing site: restrained motion, high contrast, no decoration for its
-   own sake. Tokens below are the single source of truth for color — nothing
+   own sake. Tokens below are the single source of truth for color - nothing
    past this block should hardcode a raw hex.
    ========================================================================== */
 :root {
@@ -55,7 +55,7 @@ h1, h2, h3 { margin: 0 0 12px; font-family: var(--font-display); font-weight: 60
 
 .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
 
-/* Visible keyboard focus everywhere — never suppressed. */
+/* Visible keyboard focus everywhere - never suppressed. */
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--color-ring);

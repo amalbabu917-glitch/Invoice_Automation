@@ -29,7 +29,7 @@ async function htmlToPdfBuffer(html, options = {}) {
       ...options,
     });
     // Recent Puppeteer versions return a Uint8Array rather than a true Node
-    // Buffer. Express's res.send() only special-cases Buffer.isBuffer(...) —
+    // Buffer. Express's res.send() only special-cases Buffer.isBuffer(...) -
     // anything else falls through to res.json(), which would silently
     // serialize the raw bytes as a {"0":37,"1":80,...} JSON object instead
     // of sending the PDF. Coerce explicitly so callers can res.send() safely.

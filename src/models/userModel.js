@@ -57,7 +57,7 @@ async function findById(id) {
   return rows[0] || null;
 }
 
-// Full row (includes password_hash, signature_path, gstin) — for internal use
+// Full row (includes password_hash, signature_path, gstin) - for internal use
 // (auth checks, invoice rendering, profile edit form pre-fill).
 async function findFullById(id) {
   const { rows } = await pool.query('select * from users where id = $1', [id]);
