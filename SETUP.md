@@ -68,7 +68,47 @@ npm start             # or: npm run dev (auto-restarts on file changes)
 
 Visit `http://localhost:3000/register` to create the first account.
 
-## 5. Transferring to your own repo/environment later
+## 5. Deploying to Render (get a real public URL)
+
+GitHub Pages **cannot** host this — it only serves static files, and this is
+a Node.js server (database connections, login sessions, and Puppeteer
+launching headless Chrome for every PDF). It needs an actual host.
+This repo includes a [`render.yaml`](render.yaml) Blueprint and a
+[`Dockerfile`](Dockerfile) (Puppeteer's bundled Chromium needs a few system
+libraries a bare Node image doesn't have — the Dockerfile installs them):
+
+1. Go to [render.com](https://render.com) → sign in / create an account →
+   **New → Blueprint**.
+2. Connect your GitHub account and pick the `Invoice_Automation` repo.
+   Render reads `render.yaml` automatically and shows the one service it
+   defines (`invoice-automation`, Docker runtime).
+3. You'll be prompted for the env vars marked `sync: false` in
+   `render.yaml`: `DATABASE_URL` (your Supabase connection string),
+   `APP_BASE_URL` (leave a placeholder for now — see step 5), and the
+   `SMTP_*` values if you want real password-reset emails sent. Everything
+   else (`SESSION_SECRET`, `PORT`, `BUSINESS_GST_STATE_CODE`, etc.) is
+   already filled in or auto-generated.
+4. Click **Apply** / **Deploy**. First build takes a few minutes (installing
+   Chromium's dependencies + `npm ci`).
+5. Once it's live, Render shows you a URL like
+   `https://invoice-automation-xxxx.onrender.com`. Go back into the
+   service's **Environment** tab, set `APP_BASE_URL` to that exact URL, and
+   redeploy — it's used to build password-reset links and to resolve the
+   signature image when generating PDFs.
+6. Every future `git push` to `main` auto-redeploys.
+
+**Free-tier caveats worth knowing:**
+- The free plan spins the service down after inactivity — the first request
+  after idling takes ~30-60s to cold-start.
+- The container's filesystem is **ephemeral** — anything written to
+  `public/uploads/signatures/` (uploaded signature images) is lost on every
+  redeploy/restart. Fine for trying it out; for real use, either attach a
+  paid [Render Disk](https://render.com/docs/disks) (mount it at
+  `/app/public/uploads/signatures`), or move signature storage to **Supabase
+  Storage** as described below — that's the more durable option since it
+  doesn't depend on the app host's disk at all.
+
+## 6. Transferring to your own repo/environment later
 
 Since there's no vendor lock-in beyond "a Postgres connection string":
 

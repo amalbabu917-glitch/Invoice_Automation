@@ -1,0 +1,37 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Deploy: render.com -> New -> Blueprint -> connect this GitHub repo.
+# Render reads this file automatically and provisions the service below.
+# You'll be prompted in the dashboard for every env var marked `sync: false`
+# (secrets aren't stored in this file / in git).
+services:
+  - type: web
+    name: invoice-automation
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false # Supabase connection string — see SETUP.md
+      - key: DATABASE_SSL
+        value: "true"
+      - key: SESSION_SECRET
+        generateValue: true # Render generates and stores a random secret
+      - key: PORT
+        value: "3000"
+      - key: APP_BASE_URL
+        sync: false # set to the https://<your-service>.onrender.com URL Render assigns after first deploy
+      - key: BUSINESS_GST_STATE_CODE
+        value: "32"
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
