@@ -12,7 +12,7 @@ services:
     plan: free
     envVars:
       - key: DATABASE_URL
-        sync: false # Supabase connection string — see SETUP.md
+        sync: false # Supabase POOLER connection string (port 6543, *.pooler.supabase.com) — see SETUP.md. The direct db.*.supabase.co host is IPv6-only and unreachable from Render.
       - key: DATABASE_SSL
         value: "true"
       - key: SESSION_SECRET

@@ -203,7 +203,53 @@ table.data-table th { background: var(--color-muted); color: var(--color-card-fo
 .panel { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 24px; }
 
 .item-rows .item-row { display: grid; grid-template-columns: 1fr 140px 32px; gap: 8px; margin-bottom: 8px; align-items: center; }
-.item-rows .remove-row { background: none; border: none; color: var(--color-destructive); cursor: pointer; font-size: 16px; }
+.item-rows .remove-row { background: none; border: none; color: var(--color-destructive); cursor: pointer; font-size: 16px; padding: 8px; }
+
+/* Tables scroll horizontally on their own rather than blowing out the page. */
+.table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 /* ---------- Invoice on-screen wrapper ---------- */
 .invoice-toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px; }
+
+/* ==========================================================================
+   Mobile (<768px): the fixed sidebar becomes a top bar, multi-column forms
+   collapse to one column, and touch targets grow to a comfortable size.
+   ========================================================================== */
+@media (max-width: 768px) {
+  .app-shell { flex-direction: column; min-height: 0; }
+  .sidebar {
+    width: 100%;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .sidebar .brand { width: 100%; padding: 0 16px 8px; }
+  .sidebar a, .sidebar button.link-btn {
+    display: inline-block;
+    width: auto;
+    padding: 8px 14px;
+  }
+  .main { padding: 20px 16px; }
+  .page-header { flex-wrap: wrap; gap: 10px; }
+
+  .row-2, .row-3 { grid-template-columns: 1fr; }
+
+  .auth-wrap { padding: 16px; }
+  .auth-card { padding: 24px 20px; }
+
+  .cards { flex-direction: column; }
+  .card { min-width: 0; }
+
+  .panel { padding: 16px; }
+
+  .item-rows .item-row { grid-template-columns: 1fr 100px 32px; }
+
+  /* Comfortable tap targets on touch screens. */
+  .btn, .sidebar a, .sidebar button.link-btn, .item-rows .remove-row {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  input, select, textarea { min-height: 44px; }
+}

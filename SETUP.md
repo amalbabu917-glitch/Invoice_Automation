@@ -9,14 +9,21 @@ connection string format, so "transferring" it later is just: point
 ## 1. Create the Supabase project
 
 1. Go to https://supabase.com/dashboard → New project.
-2. Once it's provisioned: **Project Settings → Database → Connection string → URI**.
-   - Use the **direct connection** (port `5432`) if you'll run this app as a
-     long-lived Node process (a VM, Render, Railway, Fly.io, etc.).
-   - Use the **pooled "Transaction" connection** (port `6543`) if you deploy
-     to a serverless/edge platform (Vercel functions, AWS Lambda, etc.) —
-     those need PgBouncer-style pooling because each invocation opens a new
-     connection.
-3. Copy that URI into `DATABASE_URL` in your `.env` (see `.env.example`).
+2. Once it's provisioned: **Project Settings → Database → Connection string →
+   URI**. Use the **pooled "Transaction" connection** (port `6543`, host
+   `aws-0-<region>.pooler.supabase.com`, user `postgres.<project-ref>`) —
+   **not** the direct connection (port `5432`, host
+   `db.<project-ref>.supabase.co`).
+
+   This isn't just a serverless-vs-long-lived-process choice: the direct host
+   resolves to an **IPv6-only address**, and most hosting platforms have no
+   outbound IPv6 route to it. This bit us for real deploying to Render — the
+   app returned 500s on every DB query with `Error: connect ENETUNREACH
+   <ipv6-address>:5432`. The pooler host is IPv4 and works everywhere,
+   Render included, so it's the default recommendation now regardless of
+   host type.
+3. Copy that pooler URI into `DATABASE_URL` in your `.env` (see
+   `.env.example`).
 
 ## 2. Apply the schema
 
