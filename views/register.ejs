@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Register — Invoice App</title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card" style="max-width:640px;">
+      <h1>Create your account</h1>
+      <p class="subtitle">This information is used as the default "Service Provider" details on every invoice you generate.</p>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <form method="POST" action="/register" enctype="multipart/form-data">
+        <div class="field">
+          <label>User Name / Entity Name *</label>
+          <input type="text" name="username" required value="<%= form.username || '' %>">
+        </div>
+
+        <div class="field">
+          <label>Business / Service Model *</label>
+          <select name="businessType" required>
+            <option value="">Select one</option>
+            <option value="AMC" <%= form.businessType === 'AMC' ? 'selected' : '' %>>AMC Model</option>
+            <option value="Service" <%= form.businessType === 'Service' ? 'selected' : '' %>>Service Model</option>
+            <option value="Both" <%= form.businessType === 'Both' ? 'selected' : '' %>>Both</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Business Address — Line 1 *</label>
+          <input type="text" name="addressLine1" required value="<%= form.addressLine1 || '' %>">
+        </div>
+        <div class="field">
+          <label>Business Address — Line 2</label>
+          <input type="text" name="addressLine2" value="<%= form.addressLine2 || '' %>">
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Business Address — Line 3</label>
+            <input type="text" name="addressLine3" value="<%= form.addressLine3 || '' %>">
+          </div>
+          <div class="field">
+            <label>Pincode *</label>
+            <input type="text" name="pincode" required value="<%= form.pincode || '' %>">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Mobile No *</label>
+            <input type="tel" name="mobile" required value="<%= form.mobile || '' %>">
+          </div>
+          <div class="field">
+            <label>Email (Optional)</label>
+            <input type="email" name="email" value="<%= form.email || '' %>">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>GSTIN (Optional)</label>
+          <input type="text" name="gstin" value="<%= form.gstin || '' %>">
+          <div class="field-hint">If provided, your invoices will be headed "TAX INVOICE" with GST auto-calculated instead of "SERVICE BILL".</div>
+        </div>
+
+        <div class="field">
+          <label>Authorized Signature (Optional)</label>
+          <input type="file" name="signature" accept=".png,.jpg,.jpeg,image/png,image/jpeg" onchange="previewSignature(this)">
+          <div class="field-hint">PNG, JPG or JPEG. Max 2MB. Shown above "Authorized Signatory" on your invoices.</div>
+          <div class="signature-preview" id="sig-preview" hidden><img id="sig-preview-img" alt="Signature preview"></div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Login Password *</label>
+            <input type="password" name="password" required>
+          </div>
+          <div class="field">
+            <label>Confirm Password *</label>
+            <input type="password" name="confirmPassword" required>
+          </div>
+        </div>
+        <div class="field-hint" style="margin-bottom:16px;">
+          5–6 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.
+        </div>
+
+        <button type="submit" class="btn btn-block">Register Account</button>
+      </form>
+
+      <div class="auth-links">Already have an account? <a href="/login">Sign in</a></div>
+    </div>
+  </div>
+
+  <script>
+    function previewSignature(input) {
+      const wrap = document.getElementById('sig-preview');
+      const img = document.getElementById('sig-preview-img');
+      if (input.files && input.files[0]) {
+        img.src = URL.createObjectURL(input.files[0]);
+        wrap.hidden = false;
+      } else {
+        wrap.hidden = true;
+      }
+    }
+  </script>
+</body>
+</html>

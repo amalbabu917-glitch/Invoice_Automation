@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Generate Invoice Report — Invoice App</title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="app-shell">
+    <%- include('partials/sidebar', { active: 'report' }) %>
+    <div class="main">
+      <div class="page-header"><h1>Generate Invoice Report</h1></div>
+
+      <div class="panel" style="margin-bottom:24px;">
+        <form method="GET" action="/report" class="row-3" style="align-items:end;">
+          <div class="field">
+            <label>From Date *</label>
+            <input type="date" name="from" required value="<%= from %>">
+          </div>
+          <div class="field">
+            <label>To Date *</label>
+            <input type="date" name="to" required value="<%= to %>">
+          </div>
+          <div class="field">
+            <button type="submit" class="btn btn-block">Generate</button>
+          </div>
+        </form>
+      </div>
+
+      <% if (invoices) { %>
+        <div class="panel">
+          <div class="page-header">
+            <h3 style="margin:0;">Results: <%= from %> to <%= to %></h3>
+            <div style="display:flex;gap:10px;">
+              <a class="btn btn-secondary btn-sm" href="/report/export/excel?from=<%= from %>&to=<%= to %>">Export Excel</a>
+              <a class="btn btn-secondary btn-sm" href="/report/export/pdf?from=<%= from %>&to=<%= to %>">Export PDF</a>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Customer</th>
+                <th>Service Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Subtotal</th>
+                <th>Tax</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (invoices.length === 0) { %>
+                <tr><td colspan="8" style="text-align:center;color:#6b7280;">No invoices in this date range.</td></tr>
+              <% } %>
+              <% invoices.forEach(function(inv) { %>
+                <% const tax = Number(inv.igst_amount) + Number(inv.cgst_amount) + Number(inv.sgst_amount); %>
+                <tr>
+                  <td><%= inv.invoice_number %></td>
+                  <td><%= inv.billed_to_name %></td>
+                  <td><%= inv.service_type %></td>
+                  <td><%= new Date(inv.invoice_date).toLocaleDateString('en-IN') %></td>
+                  <td>
+                    <span class="status-badge <%= inv.status === 'CANCELLED' ? 'status-cancelled' : 'status-active' %>"><%= inv.status %></span>
+                  </td>
+                  <td>₹<%= Number(inv.taxable_amount).toFixed(2) %></td>
+                  <td>₹<%= tax.toFixed(2) %></td>
+                  <td>₹<%= Number(inv.total_amount).toFixed(2) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+
+          <div style="margin-top:16px; font-weight:600;">
+            Total Invoices: <%= summary.count %> &nbsp; | &nbsp; Total Amount: ₹<%= summary.totalAmount.toFixed(2) %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign In — Invoice App</title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h1>Sign in</h1>
+      <p class="subtitle">Access your invoice dashboard.</p>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <form method="POST" action="/login">
+        <div class="field">
+          <label>Mobile No</label>
+          <input type="tel" name="mobile" required value="<%= mobile %>">
+        </div>
+        <div class="field">
+          <label>Login Password</label>
+          <input type="password" name="password" required>
+          <div class="field-hint" style="text-align:right;"><a href="/forgot-password">Forgot Password?</a></div>
+        </div>
+        <button type="submit" class="btn btn-block">Sign In</button>
+      </form>
+
+      <div class="auth-links">New here? <a href="/register">Create an account</a></div>
+    </div>
+  </div>
+</body>
+</html>

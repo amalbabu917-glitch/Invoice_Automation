@@ -1,0 +1,9 @@
+<div class="sidebar">
+  <div class="brand">Invoice App</div>
+  <a href="/dashboard" class="<%= active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+  <a href="/invoices/new" class="<%= active === 'create-invoice' ? 'active' : '' %>">Create Invoice</a>
+  <a href="/profile" class="<%= active === 'profile' ? 'active' : '' %>">Profile Settings</a>
+  <form action="/logout" method="POST">
+    <button type="submit" class="link-btn">Logout</button>
+  </form>
+</div>

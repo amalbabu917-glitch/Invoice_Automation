@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title><% if (!notFound) { %><%= invoice.invoice_number %> — <%= heading %><% } else { %>Invoice not found<% } %></title>
+<% if (!notFound) { %><base href="<%= appBaseUrl %>/"><% } %>
+<style>
+  /* Self-contained styles: this template is also rendered headlessly by
+     Puppeteer (no access to /css/style.css without a real page navigation),
+     so everything needed to render correctly lives in this one file. */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e5e7eb; }
+  body.print-mode { background: #fff; }
+  @page { size: A4; margin: 0; }
+
+  .toolbar {
+    max-width: 210mm; margin: 16px auto 0; display: flex; justify-content: flex-end; gap: 10px;
+  }
+  .toolbar a, .toolbar button {
+    display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+  }
+  .toolbar .btn-primary { background: #2563eb; color: #fff; }
+  .toolbar .btn-secondary { background: #6b7280; color: #fff; }
+  .toolbar .btn-danger { background: #dc2626; color: #fff; }
+  .toolbar .btn-back { background: #e5e7eb; color: #111827; }
+
+  /* Fixed A4 page: 210mm x 297mm, everything must fit inside without page breaks. */
+  .a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    max-height: 297mm;
+    overflow: hidden;
+    margin: 16px auto 40px;
+    background: #fff;
+    padding: 12mm 14mm;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #111827;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  }
+  body.print-mode .a4-page { margin: 0; box-shadow: none; }
+
+  .doc-title { text-align: center; font-size: 20px; font-weight: 700; letter-spacing: .04em; margin: 0 0 10px; }
+  .date-row { font-size: 11px; margin-bottom: 10px; }
+
+  .parties-row { display: flex; gap: 16px; margin-bottom: 12px; }
+  .party { flex: 1; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px 10px; }
+  .party h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+  .party p { margin: 0; line-height: 1.5; font-size: 11px; }
+
+  table.items-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
+  table.items-table th, table.items-table td {
+    border: 1px solid #d1d5db; padding: 5px 7px; font-size: 11px; vertical-align: top;
+  }
+  table.items-table th { background: #f3f4f6; text-align: left; }
+  table.items-table td.amount, table.items-table th.amount { text-align: right; }
+  table.items-table td.sno { text-align: center; }
+  .filler-row td { height: 18px; border-top: none; }
+
+  .totals-wrap { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .totals-block { width: 46%; }
+  .totals-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; }
+  .totals-row.small { color: #374151; }
+  .totals-row.total { border-top: 1.5px solid #111827; margin-top: 4px; padding-top: 5px; font-weight: 700; font-size: 12.5px; }
+
+  .words-row { font-size: 11px; margin-bottom: 22px; }
+  .words-row .label { font-weight: 600; }
+
+  .signature-area { display: flex; justify-content: flex-end; }
+  .signature-block { width: 220px; text-align: center; }
+  .signature-block img { max-height: 80px; max-width: 200px; display: block; margin: 0 auto 4px; }
+  .signature-block .provider-name { font-weight: 600; font-size: 12px; margin-top: 4px; }
+  .signature-block .sig-label { border-top: 1px solid #111827; margin-top: 30px; padding-top: 4px; font-size: 11px; }
+  /* No signature uploaded: no reserved space above the line, per spec. */
+  .signature-block.no-signature .sig-label { margin-top: 46px; }
+
+  .status-strip { text-align: center; font-weight: 700; color: #b91c1c; letter-spacing: .1em; margin-bottom: 8px; }
+</style>
+</head>
+<body class="<%= printMode ? 'print-mode' : '' %>">
+  <% if (notFound) { %>
+    <div style="max-width:600px;margin:60px auto;text-align:center;font-family:Arial,sans-serif;">
+      <h2>Invoice not found</h2>
+      <p><a href="/dashboard">Back to dashboard</a></p>
+    </div>
+  <% } else { %>
+
+    <% if (!printMode) { %>
+    <div class="toolbar">
+      <a class="btn-back" href="/dashboard">&larr; Dashboard</a>
+      <a class="btn-secondary" href="/invoices/<%= invoice.id %>/pdf" target="_blank">Download PDF</a>
+      <% if (invoice.status === 'ACTIVE') { %>
+      <form method="POST" action="/invoices/<%= invoice.id %>/cancel" onsubmit="return confirm('Cancel this invoice? It will stay in your records and reports, marked CANCELLED.');" style="margin:0;">
+        <button type="submit" class="btn-danger">Cancel Invoice</button>
+      </form>
+      <% } %>
+    </div>
+    <% } %>
+
+    <div class="a4-page">
+      <% if (invoice.status === 'CANCELLED') { %>
+        <div class="status-strip">CANCELLED</div>
+      <% } %>
+
+      <div class="doc-title"><%= heading %></div>
+      <div class="date-row"><strong>Date:</strong> <%= new Date(invoice.invoice_date).toLocaleDateString('en-IN') %> &nbsp; | &nbsp; <strong>Invoice No:</strong> <%= invoice.invoice_number %></div>
+
+      <div class="parties-row">
+        <div class="party">
+          <h4>Service Provider</h4>
+          <p>
+            <%= user.username %><br>
+            <%= user.address_line1 %><br>
+            <% if (user.address_line2) { %><%= user.address_line2 %><br><% } %>
+            <% if (user.address_line3) { %><%= user.address_line3 %><br><% } %>
+            <%= user.mobile %><br>
+            <% if (user.email) { %><%= user.email %><% } %>
+          </p>
+        </div>
+        <div class="party">
+          <h4>Service Receiver</h4>
+          <p>
+            <%= invoice.billed_to_name %><br>
+            <% if (invoice.billed_to_address_line1) { %><%= invoice.billed_to_address_line1 %><br><% } %>
+            <% if (invoice.billed_to_address_line2) { %><%= invoice.billed_to_address_line2 %><br><% } %>
+            <% if (invoice.billed_to_address_line3) { %><%= invoice.billed_to_address_line3 %><br><% } %>
+            GSTIN: <%= invoice.billed_to_gstin || '-' %><br>
+            Mobile: <%= invoice.billed_to_mobile || '-' %><br>
+            Email: <%= invoice.billed_to_email || '-' %>
+          </p>
+        </div>
+      </div>
+
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width:10%">S.No</th>
+            <th style="width:70%">Particular</th>
+            <th style="width:20%" class="amount">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(function(it) { %>
+            <tr>
+              <td class="sno"><%= it.sno %></td>
+              <td><%= it.particular %></td>
+              <td class="amount">₹<%= Number(it.amount).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+          <% for (let i = 0; i < fillerRows; i++) { %>
+            <tr class="filler-row"><td class="sno">&nbsp;</td><td></td><td></td></tr>
+          <% } %>
+        </tbody>
+      </table>
+
+      <div class="totals-wrap">
+        <div class="totals-block">
+          <div class="totals-row"><span>Taxable Amount</span><span>₹<%= Number(invoice.taxable_amount).toFixed(2) %></span></div>
+          <% if (heading === 'TAX INVOICE') { %>
+            <% if (Number(invoice.igst_amount) > 0) { %>
+              <div class="totals-row small"><span>IGST <%= invoice.igst_rate %>%</span><span>₹<%= Number(invoice.igst_amount).toFixed(2) %></span></div>
+            <% } else { %>
+              <div class="totals-row small"><span>CGST <%= invoice.cgst_rate %>%</span><span>₹<%= Number(invoice.cgst_amount).toFixed(2) %></span></div>
+              <div class="totals-row small"><span>SGST <%= invoice.sgst_rate %>%</span><span>₹<%= Number(invoice.sgst_amount).toFixed(2) %></span></div>
+            <% } %>
+          <% } %>
+          <div class="totals-row total"><span>Total</span><span>₹<%= Number(invoice.total_amount).toFixed(2) %></span></div>
+        </div>
+      </div>
+
+      <div class="words-row"><span class="label">Amount in Words:</span> <%= invoice.total_in_words %></div>
+
+      <div class="signature-area">
+        <div class="signature-block <%= signatureUrl ? '' : 'no-signature' %>">
+          <% if (signatureUrl) { %><img src="<%= signatureUrl %>" alt="Signature"><% } %>
+          <div class="provider-name"><%= user.username %></div>
+          <div class="sig-label">Authorized Signatory</div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Profile Settings — Invoice App</title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="app-shell">
+    <%- include('partials/sidebar', { active: 'profile' }) %>
+    <div class="main">
+      <div class="page-header"><h1>Profile Settings</h1></div>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+      <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+      <div class="panel" style="max-width:640px;">
+        <form method="POST" action="/profile" enctype="multipart/form-data">
+          <div class="field">
+            <label>User Name / Entity Name</label>
+            <input type="text" value="<%= user.username %>" disabled>
+            <div class="field-hint">Contact support to change your registered entity name.</div>
+          </div>
+
+          <div class="field">
+            <label>Address Line 1 *</label>
+            <input type="text" name="addressLine1" required value="<%= user.address_line1 %>">
+          </div>
+          <div class="field">
+            <label>Address Line 2</label>
+            <input type="text" name="addressLine2" value="<%= user.address_line2 || '' %>">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label>Address Line 3</label>
+              <input type="text" name="addressLine3" value="<%= user.address_line3 || '' %>">
+            </div>
+            <div class="field">
+              <label>Pincode *</label>
+              <input type="text" name="pincode" required value="<%= user.pincode %>">
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label>Mobile Number *</label>
+              <input type="tel" name="mobile" required value="<%= user.mobile %>">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" value="<%= user.email || '' %>">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>GST Number</label>
+            <input type="text" name="gstin" value="<%= user.gstin || '' %>">
+            <div class="field-hint">Adding or removing this switches your invoices between "TAX INVOICE" and "SERVICE BILL".</div>
+          </div>
+
+          <div class="field">
+            <label>Authorized Signature</label>
+            <% if (user.signature_path) { %>
+              <div class="signature-preview"><img src="/uploads/signatures/<%= user.signature_path %>" alt="Current signature"></div>
+            <% } else { %>
+              <div class="field-hint">No signature on file.</div>
+            <% } %>
+            <input type="file" name="signature" accept=".png,.jpg,.jpeg,image/png,image/jpeg" style="margin-top:8px;">
+            <div class="field-hint">Upload a new PNG/JPG/JPEG (max 2MB) to replace it.</div>
+          </div>
+
+          <button type="submit" class="btn">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

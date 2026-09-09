@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+npm-debug.log*
+
+# Uploaded signature images are user data, not source — don't version them.
+public/uploads/signatures/*
+!public/uploads/signatures/.gitkeep
+
+*.log

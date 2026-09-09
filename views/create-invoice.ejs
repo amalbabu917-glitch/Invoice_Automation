@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Create Invoice — Invoice App</title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="app-shell">
+    <%- include('partials/sidebar', { active: 'create-invoice' }) %>
+    <div class="main">
+      <div class="page-header"><h1>Create Invoice</h1></div>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <div class="panel">
+        <form method="POST" action="/invoices">
+          <div class="row-2">
+            <div class="field">
+              <label>Date *</label>
+              <input type="date" name="invoiceDate" required value="<%= form.invoiceDate || new Date().toISOString().slice(0,10) %>">
+            </div>
+            <div class="field">
+              <label>Service Type *</label>
+              <select name="serviceType" required>
+                <option value="">Select one</option>
+                <option value="AMC">AMC Service</option>
+                <option value="Service">Service</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="margin-top:20px;">Service Receiver</h3>
+          <div class="field">
+            <label>Name *</label>
+            <input type="text" name="billedToName" required value="<%= form.billedToName || '' %>">
+          </div>
+          <div class="field">
+            <label>Address Line 1</label>
+            <input type="text" name="billedToAddressLine1" value="<%= form.billedToAddressLine1 || '' %>">
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label>Address Line 2</label>
+              <input type="text" name="billedToAddressLine2" value="<%= form.billedToAddressLine2 || '' %>">
+            </div>
+            <div class="field">
+              <label>Address Line 3</label>
+              <input type="text" name="billedToAddressLine3" value="<%= form.billedToAddressLine3 || '' %>">
+            </div>
+          </div>
+          <div class="row-3">
+            <div class="field">
+              <label>GST Number</label>
+              <input type="text" name="billedToGstin" value="<%= form.billedToGstin || '' %>">
+            </div>
+            <div class="field">
+              <label>Mobile No</label>
+              <input type="tel" name="billedToMobile" value="<%= form.billedToMobile || '' %>">
+            </div>
+            <div class="field">
+              <label>Email ID</label>
+              <input type="email" name="billedToEmail" value="<%= form.billedToEmail || '' %>">
+            </div>
+          </div>
+          <div class="field-hint" style="margin-bottom:16px;">
+            GST is auto-calculated: if the GSTIN's state code matches your registered state, CGST 9% + SGST 9% apply; otherwise IGST 18% applies.
+          </div>
+
+          <h3>Particulars</h3>
+          <div class="item-rows" id="item-rows">
+            <div class="item-row">
+              <input type="text" name="particular" placeholder="Particular">
+              <input type="number" step="0.01" min="0" name="amount" placeholder="Amount">
+              <button type="button" class="remove-row" onclick="removeRow(this)">✕</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addRow()">+ Add Line</button>
+
+          <div style="margin-top:24px;">
+            <button type="submit" class="btn">Generate Invoice</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addRow() {
+      const rows = document.getElementById('item-rows');
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <input type="text" name="particular" placeholder="Particular">
+        <input type="number" step="0.01" min="0" name="amount" placeholder="Amount">
+        <button type="button" class="remove-row" onclick="removeRow(this)">✕</button>`;
+      rows.appendChild(row);
+    }
+    function removeRow(btn) {
+      const rows = document.getElementById('item-rows');
+      if (rows.children.length > 1) btn.closest('.item-row').remove();
+    }
+  </script>
+</body>
+</html>

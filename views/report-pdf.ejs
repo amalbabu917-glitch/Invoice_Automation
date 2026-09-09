@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice Report</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #111827; padding: 10mm 12mm; }
+  @page { size: A4 landscape; margin: 0; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .range { color: #4b5563; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid #d1d5db; padding: 5px 7px; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; }
+  tfoot td { font-weight: 700; border-top: 2px solid #111827; }
+  .remark-cancelled { color: #b91c1c; font-weight: 700; }
+</style>
+</head>
+<body>
+  <h1>Invoice Report</h1>
+  <div class="range">Period: <%= from %> to <%= to %></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Invoice Number</th>
+        <th>Billed To Name</th>
+        <th>GSTIN</th>
+        <th class="num">Taxable Amount</th>
+        <th class="num">IGST 18%</th>
+        <th class="num">CGST 9%</th>
+        <th class="num">SGST 9%</th>
+        <th class="num">Total</th>
+        <th>Remark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% invoices.forEach(function(inv) { %>
+        <tr>
+          <td><%= new Date(inv.invoice_date).toLocaleDateString('en-IN') %></td>
+          <td><%= inv.invoice_number %></td>
+          <td><%= inv.billed_to_name %></td>
+          <td><%= inv.billed_to_gstin || '-' %></td>
+          <td class="num">₹<%= Number(inv.taxable_amount).toFixed(2) %></td>
+          <td class="num">₹<%= Number(inv.igst_amount).toFixed(2) %></td>
+          <td class="num">₹<%= Number(inv.cgst_amount).toFixed(2) %></td>
+          <td class="num">₹<%= Number(inv.sgst_amount).toFixed(2) %></td>
+          <td class="num">₹<%= Number(inv.total_amount).toFixed(2) %></td>
+          <td class="<%= inv.status === 'CANCELLED' ? 'remark-cancelled' : '' %>"><%= inv.status === 'CANCELLED' ? 'CANCELLED' : '' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">Total Invoices: <%= summary.count %></td>
+        <td colspan="4"></td>
+        <td class="num">₹<%= summary.totalAmount.toFixed(2) %></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html>
